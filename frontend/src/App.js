@@ -1,11 +1,18 @@
-
+import Header from './components/Header'
+import Footer from './components/Footer'
+import HomeScreen from './screens/HomeScreen'
 import './App.css';
 
 const App= () => {
   return (
-    <div className="App">
-      <h1 className="text-6xl text-blue-500">Welcome to the Shop</h1>
-    </div>
+    <>
+      <Header />
+      <main className="m-10"><h1 className="text-xl text-blue-500 m-4">Latest Products:</h1>
+      <HomeScreen />
+      </main>
+      
+      <Footer />
+    </>
   );
 }
 
