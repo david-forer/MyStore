@@ -1,5 +1,8 @@
 import React from 'react'
 import Rating from './Rating'
+import { Link } from 'react-router-dom'
+
+
 
 const Product = ({product}) => {
     return (
@@ -16,15 +19,9 @@ const Product = ({product}) => {
                     <h4 className="text-xl font-semibold leading-5 text-gray-800">{ product.name}</h4>
                     <p className="mt-4 text-sm leading-tight text-gray-800">{ product.description}</p>
                     <div className="mt-8 flex justify-between items-center">
-                        {/* <div className="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer text-red-500 icon icon-tabler icon-tabler-heart" width={20} height={20} viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M19.5 13.572l-7.5 7.428l-7.5 -7.428m0 0a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
-                            </svg>
-                            <p className="ml-2 sm:ml-3 text-xs font-medium leading-3 text-gray-500">141</p>
-                        </div> */}
+                        
                         <div className="flex items-center text-indigo-700 cursor-pointer">
-                            <a className="inline-flex items-center h-8 px-4 m-1 text-sm text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800" href={`/product/${product.id}`}>Read More</a>
+                            <Link to={`/product/${product._id}`} className="inline-flex items-center h-8 px-4 m-1 text-sm text-indigo-100 transition-colors duration-150 bg-indigo-700 rounded-lg focus:shadow-outline hover:bg-indigo-800" >Read More</Link>
                             
                         </div>
                     </div>
