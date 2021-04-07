@@ -25,7 +25,7 @@ const HomeScreen = () => {
       
       {loading ? <h2 className="m-20"><Loader /></h2> : error ? <h3>{ error}</h3> :  <div className="container mx-auto grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 pt-6 gap-8">
         {products.map((product) => (
-          <div key={product.id} className="">
+          <div key={product._id} className="">
             <Product product={product} />
           </div>
         ))}
