@@ -1280,6 +1280,11 @@
   dependencies:
     "@hapi/hoek" "^8.3.0"
 
+"@heroicons/react@^1.0.0":
+  "integrity" "sha512-BHu+zsJ37B8RsspItwn2yTrph1Jj+k8YhVGV/UmAbxjhphC+RPdYMKzAJm9kGtA526loPtP+FYQM9GdMYTe13Q=="
+  "resolved" "https://registry.npmjs.org/@heroicons/react/-/react-1.0.0.tgz"
+  "version" "1.0.0"
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   "integrity" "sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ=="
   "resolved" "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz"
