@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
-import { addToCart } from "../actions/cartActions";
+import { addToCart, removeFromCart } from "../actions/cartActions";
 import "../App.css";
 import { TrashIcon } from "@heroicons/react/solid";
 
@@ -25,7 +25,8 @@ const CartScreen = ({ match, location, history }) => {
   }, [dispatch, productId, qty]);
 
   const removeFromCartHandler = (id) => {
-    console.log("remove");
+      console.log("remove");
+      dispatch(removeFromCart(id))
   };
 
   const checkoutHandler = () => {
@@ -59,7 +60,7 @@ const CartScreen = ({ match, location, history }) => {
                       className="w-24 rounded ml-4"
                     />
                   </td>
-                  <td>
+                  <td className="text-lg">
                     <Link to={`/product/${item.product}`}>{item.name}</Link>
                   </td>
                   <td>${item.price}</td>
@@ -138,7 +139,7 @@ const CartScreen = ({ match, location, history }) => {
               disabled={cartItems.length === 0}
               class="flex justify-center w-full px-10 py-3 mt-6 font-medium text-white uppercase bg-indigo-500 rounded-full shadow item-center hover:bg-indigo-800 focus:shadow-outline focus:outline-none"
             >
-              <span class="ml-2 mt-5px">Procceed to checkout</span>
+              <span class="ml-2 mt-5px">Proceed to checkout</span>
             </button>
           </div>
         </div>
