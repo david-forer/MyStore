@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ShippingFormContainer from "../components/ShippingFormContainer";
 import { savePaymentMethod } from "../actions/cartActions";
+import CheckoutSteps from '../components/CheckoutSteps'
 
 const PaymentScreen = ({ history }) => {
   const cart = useSelector((state) => state.cart);
@@ -23,7 +24,7 @@ const PaymentScreen = ({ history }) => {
 
   return (
     <ShippingFormContainer>
-      {/* <CheckoutSteps step1 step2 step3 /> */}
+      <CheckoutSteps step1 step2 step3 />
       <h1 className="text-2xl mb-16 w-full bg-gray-100 p-4 rounded-lg text-center font-bold">
         Payment Method
       </h1>

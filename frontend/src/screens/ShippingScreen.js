@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { saveShippingAddress } from "../actions/cartActions";
-// import CheckoutSteps from '../components/CheckoutSteps'
+import CheckoutSteps from '../components/CheckoutSteps'
 // import Message from "../components/Message";
 // import Loader from "../components/Loader";
 
@@ -27,7 +27,7 @@ const ShippingScreen = ({ history }) => {
 
   return (
     <ShippingFormContainer>
-      {/* <CheckoutSteps step1 step2/> */}
+      <CheckoutSteps step1 step2/>
       <h1 className="text-2xl mb-16 w-full bg-gray-100 p-4 rounded-lg text-center font-bold">
         Shipping
       </h1>

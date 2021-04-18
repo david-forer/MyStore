@@ -1,7 +1,17 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import "../App.css";
+import {logout} from '../actions/userActions'
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  const logoutHandler = () => {
+    dispatch(logout());
+  };
   return (
     <header>
       <section className="w-full px-8 text-gray-700 bg-white">
@@ -44,17 +54,53 @@ const Header = () => {
             >
               Cart
             </Link>
+
+            {userInfo ? (
+              <div className="group inline-block relative">
+                <button className="bg-gray-300  text-gray-700 font-semibold py-2 px-4 rounded inline-flex items-center">
+                  <span className="mr-1">{userInfo.name}</span>
+                  <svg
+                    className="fill-current h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </button>
+                <ul className=" text-gray-700 pt-1 group-hover:block">
+                  <li className="">
+                    <Link
+                      className="rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap"
+                      to="/profile"
+                    >
+                      Profile
+                    </Link>
+                  </li>
+                  <li className="">
+                    <Link
+                      className="bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap"
+                      onClick={logoutHandler}
+                      to="/"
+                    >
+                      Logout
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="text-base font-medium leading-6 text-gray-600 whitespace-no-wrap transition duration-150 ease-in-out hover:text-gray-900"
+              >
+                Sign in
+              </Link>
+            )}
+
             <Link
-              to="/signin"
-              className="text-base font-medium leading-6 text-gray-600 whitespace-no-wrap transition duration-150 ease-in-out hover:text-gray-900"
-            >
-              Sign in
-            </Link>
-            <Link
-              to="/signup"
+              to="/register"
               className="inline-flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-white whitespace-no-wrap bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
             >
-              Sign up
+              Sign Up
             </Link>
           </div>
         </div>
