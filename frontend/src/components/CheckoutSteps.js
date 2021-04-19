@@ -45,7 +45,7 @@ const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
         </div>
 
     </div>
-    // <div class="flex flex-row pt-2 text-xs pt-6 pb-5">
+    // <div class="flex flex-row text-xs pt-6 pb-5">
     //   {" "}
     //   <span class="font-bold">Information</span>{" "}
     //   <small class="text-gray-400 ml-1">></small>{" "}
