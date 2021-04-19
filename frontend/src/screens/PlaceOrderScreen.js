@@ -49,7 +49,7 @@ const PlaceOrderScreen = ({history}) => {
   return (
     <>
       <CheckoutSteps step1 step2 step3 step4 />
-      <hr />
+      <hr className="max-w-4xl mx-auto text-center border-black mb-20"/>
 
       <div className="grid grid-cols-2 mt-12">
         <section>
