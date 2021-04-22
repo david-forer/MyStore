@@ -10,6 +10,7 @@ import ShippingScreen from './screens/ShippingScreen'
 import PaymentScreen from './screens/PaymentScreen'
 import PlaceOrderScreen from './screens/PlaceOrderScreen'
 import OrderScreen from './screens/OrderScreen'
+import UserListScreen from './screens/UserListScreen'
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import "./App.css";
 
@@ -29,6 +30,7 @@ const App = () => {
           <Route path="/login" component={LoginScreen} />
           <Route exact path="/" component={HomeScreen} />
           <Route path="/cart/:id?" component={CartScreen} />
+          <Route path="/admin/userList" component={UserListScreen} />
         </main>
 
         <Footer />
