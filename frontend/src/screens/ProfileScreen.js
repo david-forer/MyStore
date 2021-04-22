@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { getUserDetails, updateUserProfile } from "../actions/userActions";
+import { listMyOrders } from "../actions/orderActions";
+import { BanIcon } from "@heroicons/react/outline";
 
 // import FormContainer from "../components/FormContainer";
 
@@ -25,12 +27,16 @@ const ProfileScreen = ({ location, history }) => {
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
   const { success } = userUpdateProfile;
 
+  const orderListMy = useSelector((state) => state.orderListMy);
+  const { loading: loadingOrders, error: errorOrders, orders } = orderListMy;
+
   useEffect(() => {
     if (!userInfo) {
       history.push("/login");
     } else {
       if (!user.name) {
         dispatch(getUserDetails("profile"));
+        dispatch(listMyOrders());
       } else {
         setName(user.name);
         setEmail(user.email);
@@ -49,16 +55,16 @@ const ProfileScreen = ({ location, history }) => {
   };
 
   return (
-    <div className="grid grid-cols-2">
+    <div className="grid md:grid-cols-3 sm:grid-cols-1 gap-8">
       <div>
-        <h2 className="mb-12 text-2xl font-bold">User Profile</h2>
+        <h2 className="mb-16 text-2xl font-bold">User Profile</h2>
         {message && <Message>{message}</Message>}
         {error && <Message>{error}</Message>}
         {success && <Message>Profile Updated</Message>}
         {loading && <Loader />}
         <form onSubmit={submitHandler}>
-          <div className="flex flex-wrap -mx-3 mb-6 w-3/4">
-            <div className="w-full md:w-full px-3 mb-6">
+          <div className="flex flex-wrap -mx-3 mb-6 sm:w-1/2 md:w-full">
+            <div className="w-full md:w-full px-3 mb-6 col-span-1">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="Name"
@@ -129,9 +135,61 @@ const ProfileScreen = ({ location, history }) => {
           </div>
         </form>
       </div>
-      <div>
+      <div className="col-span-2 grid lg:justify-end">
         {" "}
-        <h2 className="mb-12 text-2xl font-bold">All Orders</h2>
+        <h2 className="mb-6 text-2xl font-bold">All Orders</h2>
+        {loadingOrders ? (
+          <Loader />
+        ) : errorOrders ? (
+          <Message>{errorOrders}</Message>
+        ) : (
+          <table>
+            <thead>
+              <tr className="w-full h-16 border-gray-300 dark:border-gray-200 border-b py-4 bg-indigo-100">
+                <th>ID</th>
+                <th>DATE</th>
+                <th>TOTAL</th>
+                <th>PAID</th>
+                <th>DELIVERED</th>
+                <th>DETAILS</th>
+              </tr>
+            </thead>
+            <tbody className="">
+              {orders.map((order) => (
+                <tr
+                  key={order._id}
+                  className="h-12 border-gray-300  border-t border-b hover:border-indigo-300 hover:shadow-md  transition duration-150 ease-in-out text-sm"
+                >
+                  <td>{order._id}</td>
+                  <td>{order.createdAt.substring(0, 10)}</td>
+                  <td>{order.totalPrice}</td>
+                  <td className="ml-8">
+                    {order.isPaid ? (
+                      order.paidAt.substring(0, 10)
+                    ) : (
+                      <BanIcon className="h-5 w-5 text-blue-500" />
+                    )}
+                  </td>
+                  <td>
+                    {order.isDelivered ? (
+                      order.deliveredAt.substring(0, 10)
+                    ) : (
+                      <BanIcon className="h-5 w-5 text-blue-500" />
+                    )}
+                  </td>
+                  <td>
+                    <Link
+                      to={`/order/${order._id}`}
+                      className="w-24  bg-gray-200 transition duration-150 ease-in-out focus:outline-none focus:border-gray-800 focus:shadow-outline-gray hover:bg-gray-300 rounded text-indigo-700 px-5 py-1 text-sm cursor-default"
+                    >
+                      Details
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
