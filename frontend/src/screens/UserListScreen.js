@@ -5,7 +5,7 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 // import { register } from "../actions/userActions";
 // import FormContainer from "../components/FormContainer";
-import { listUsers } from "../actions/userActions";
+import { listUsers, deleteUser } from "../actions/userActions";
 import {
   BanIcon,
   BadgeCheckIcon,
@@ -22,6 +22,9 @@ const UserListScreen = ({history}) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const userDelete = useSelector((state) => state.userDelete);
+  const { success:successDelete } = userDelete;
+
     useEffect(() => {
         if (userInfo && userInfo.isAdmin) {
             dispatch(listUsers());
@@ -29,10 +32,11 @@ const UserListScreen = ({history}) => {
             history.push('/login')
       }
    
-  }, [dispatch, history, userInfo]);
+  }, [dispatch, history, userInfo, successDelete]);
 
   const deleteHandler = (id) => {
-    console.log(users._id);
+    if(window.confirm('Are You Sure?'))
+    dispatch(deleteUser(id));
   };
 
   return (
@@ -71,7 +75,7 @@ const UserListScreen = ({history}) => {
                   )}
                 </td>
                 <td>
-                  <Link to={`/user/${user._id}`} className="">
+                  <Link to={`/admin/user/${user._id}/edit`} className="">
                     <PencilAltIcon className="h-6 w-6 text-indigo-500" />
                   </Link>
                 </td>
