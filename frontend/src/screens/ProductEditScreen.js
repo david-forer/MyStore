@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +20,7 @@ const ProductEditScreen = ({ match, history }) => {
   const [category, setCategory] = useState("");
   const [countInStock, setCountInStock] = useState("0");
   const [description, setDescription] = useState("");
+  const [uploading, setUploading] = useState("false");
 
   const dispatch = useDispatch();
 
@@ -58,18 +60,43 @@ const ProductEditScreen = ({ match, history }) => {
     }
   }, [product, productId, dispatch, history, successUpdate]);
 
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+    setUploading(true);
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      const { data } = await axios.post("/api/upload", formData, config);
+
+      setImage(data);
+      setUploading(false);
+    } catch (error) {
+      console.error(error);
+      setUploading(false);
+    }
+  };
+
   const submitHandler = (e) => {
     e.preventDefault();
-      dispatch(updateProduct({
-          _id: productId,
-          name,
-          price,
-          image,
-          brand,
-          category,
-          description,
-          countInStock,
-    }))
+    dispatch(
+      updateProduct({
+        _id: productId,
+        name,
+        price,
+        image,
+        brand,
+        category,
+        description,
+        countInStock,
+      })
+    );
   };
 
   return (
@@ -135,8 +162,18 @@ const ProductEditScreen = ({ match, history }) => {
                   value={image}
                   onChange={(e) => setImage(e.target.checked)}
                 />
+                <label class="w-36 flex flex-col items-center px-4 py-1 bg-white text-blue rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-blue-400 hover:text-white mb-4">
+                  <span class="m-2 text-base leading-normal">Choose file</span>
+                  <input
+                    id="image-file"
+                    type="file"
+                    class="hidden"
+                    custom
+                    onChange={uploadFileHandler}
+                  />
+                </label>
+                {uploading && <Loader />}
               </div>
-
               <div className="w-full md:w-full px-3 mb-6">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
