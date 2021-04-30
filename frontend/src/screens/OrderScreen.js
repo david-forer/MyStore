@@ -6,21 +6,35 @@ import { useDispatch, useSelector } from "react-redux";
 // import { saveShippingAddress } from "../actions/cartActions";
 // import CheckoutSteps from "../components/CheckoutSteps";
 import Message from "../components/Message";
-import { getOrderDetails, payOrder } from "../actions/orderActions";
-import { ORDER_PAY_RESET } from '../constants/orderConstants';
+import {
+  getOrderDetails,
+  payOrder,
+  deliverOrder,
+} from "../actions/orderActions";
+import {
+  ORDER_PAY_RESET,
+  ORDER_DELIVER_RESET,
+} from "../constants/orderConstants";
 import Loader from "../components/Loader";
 
-const OrderScreen = ({ match }) => {
+const OrderScreen = ({ match, history }) => {
   const orderId = match.params.id;
 
   const [sdkReady, setSdkReady] = useState(false);
+
   const dispatch = useDispatch();
 
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
 
-  const orderPay = useSelector((state) => state.orderDetails);
+  const orderPay = useSelector((state) => state.orderPay);
   const { loading: loadingPay, success: successPay } = orderPay;
+
+  const orderDeliver = useSelector((state) => state.orderDeliver);
+  const { loading: loadingDeliver, success: successDeliver } = orderDeliver;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
   if (!loading) {
     //   Calculate prices
@@ -34,6 +48,9 @@ const OrderScreen = ({ match }) => {
   }
 
   useEffect(() => {
+    if (!userInfo) {
+      history.push("/login");
+    }
     const addPayPalScript = async () => {
       const { data: clientId } = await axios.get("/api/config/paypal");
       const script = document.createElement("script");
@@ -46,8 +63,9 @@ const OrderScreen = ({ match }) => {
       document.body.appendChild(script);
     };
 
-    if (!order || successPay) {
-      dispatch({ type: ORDER_PAY_RESET})
+    if (!order || successPay || successDeliver) {
+      dispatch({ type: ORDER_PAY_RESET });
+      dispatch({ type: ORDER_DELIVER_RESET });
       dispatch(getOrderDetails(orderId));
     } else if (!order.isPaid) {
       if (!window.paypal) {
@@ -56,11 +74,15 @@ const OrderScreen = ({ match }) => {
         setSdkReady(true);
       }
     }
-  }, [dispatch, orderId, successPay, order]);
+  }, [dispatch, orderId, successPay, order, successDeliver, history, userInfo]);
 
   const successPaymentHandler = (paymentResult) => {
-dispatch(payOrder(orderId, paymentResult))
-  }
+    dispatch(payOrder(orderId, paymentResult));
+  };
+
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order));
+  };
 
   return loading ? (
     <Loader />
@@ -71,7 +93,7 @@ dispatch(payOrder(orderId, paymentResult))
       <h1>Order {order._id}</h1>
       <div className="grid grid-cols-2 mt-12">
         <section>
-          <h2 className="mb-4">SHIPPING</h2>
+          <h2 className="text-2xl lg:text-3xl text-center text-transparent bg-clip-text bg-gradient-to-br from-black to-purple-200 font-bold mb-12">SHIPPING</h2>
           <p>
             <strong>Name:</strong> {order.user.name}
           </p>
@@ -87,7 +109,12 @@ dispatch(payOrder(orderId, paymentResult))
               {order.shippingAddress.country}
             </p>
             {order.isDelivered ? (
-              <Message>Delivered on: {order.deliveredAt}</Message>
+              <div
+                className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+                role="alert"
+              >
+                Delivered on: {order.deliveredAt}
+              </div>
             ) : (
               <div
                 className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
@@ -106,7 +133,12 @@ dispatch(payOrder(orderId, paymentResult))
               {order.paymentMethod}
             </p>
             {order.isPaid ? (
-              <Message>Paid on: {order.paidAt}</Message>
+              <div
+                className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+                role="alert"
+              >
+                Paid on: {order.paidAt}
+              </div>
             ) : (
               <div
                 className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
@@ -144,62 +176,56 @@ dispatch(payOrder(orderId, paymentResult))
             </div>
           )}
         </section>
-        <section className="mb-6 ml-12 border border-green-800 flex-col  justify-center">
-          <h2 className="mb-4 ml-2">ORDER SUMMARY</h2>
-          <div>
-            <table className="mb-6  border border-green-800">
-              <tbody className="table-fixed">
-                <tr className="">
-                  <tr>
-                    <td>
-                      <span className="mr-9 ">Items</span>
-                      <span className="justify-end">${order.itemsPrice}</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <span className="mr-6">Shipping</span>$
-                      {order.shippingPrice}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <span className="mr-12">Tax</span>${order.taxPrice}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <span className="mr-12">Total</span>${order.totalPrice}
-                    </td>
-                  </tr>
-                </tr>
-              </tbody>
-            </table>
+        <section className="container mx-auto px-10">
+          <h2 className="text-2xl lg:text-3xl text-center text-transparent bg-clip-text bg-gradient-to-br from-black to-purple-200 font-bold mb-12">ORDER SUMMARY</h2>
+          <div className="flex justify-between items-center p-6 text-lg leading-4 text-gray-500  lg:px-12">
+            <h4 class="m-0 text-gray-500">Items</h4>
 
-            <div>
-              {!order.isPaid && (
-                <div>
-                  {loadingPay && <Loader />}
-                  {!sdkReady ? (
-                    <Loader />
-                  ) : (
-                    <PayPalButton
-                      amount={order.totalPrice}
-                      onSuccess={successPaymentHandler}
-                    />
-                  )}
-                </div>
-              )}
-              {/* <button
-                className="inline-flex items-center justify-center px-12 py-1 text-sm font-medium leading-6 text-white whitespace-no-wrap bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 "
-                disabled={order.cartItems === 0}
-                type="button"
-                onClick={placeOrderHandler}
-              >
-                Place Order
-              </button> */}
-            </div>
+            <div class="text-center">${order.itemsPrice}</div>
+              </div>
+              <div className="flex justify-between items-center p-6 text-lg leading-4 text-gray-500  lg:px-12">
+            <h4 class="m-0 text-gray-500">Shipping</h4>
+
+            <div class="text-center">${order.shippingPrice}</div>
+              </div>
+              <div className="flex justify-between items-center p-6 text-lg leading-4 text-gray-500  lg:px-12">
+            <h4 class="m-0 text-gray-500">Tax</h4>
+
+            <div class="text-center">${order.taxPrice}</div>
           </div>
+          <div className="flex justify-between items-center p-6 text-lg leading-4 text-gray-800 lg:px-12 font-bold">
+            <h4 class="m-0 text-gray-800">Total</h4>
+
+            <div class="text-center">${order.totalPrice}</div>
+          </div>
+
+          <div>
+            {!order.isPaid && (
+              <div>
+                {loadingPay && <Loader />}
+                {!sdkReady ? (
+                  <Loader />
+                ) : (
+                  <PayPalButton
+                    amount={order.totalPrice}
+                    onSuccess={successPaymentHandler}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+
+          {loadingDeliver && <Loader />}
+          {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+            <div>
+              <button
+                className="flex justify-center w-3/4 px-10 py-3 mt-6 font-medium text-white uppercase bg-indigo-500  shadow item-center hover:bg-indigo-800 focus:shadow-outline focus:outline-none"
+                onClick={deliverHandler}
+              >
+                <span class="ml-2 mt-5px">Mark as Delivered</span>
+              </button>
+            </div>
+          )}
         </section>
       </div>
     </>

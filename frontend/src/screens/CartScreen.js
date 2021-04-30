@@ -137,7 +137,7 @@ const CartScreen = ({ match, location, history }) => {
             <button
               onClick={checkoutHandler}
               disabled={cartItems.length === 0}
-              class="flex justify-center w-full px-10 py-3 mt-6 font-medium text-white uppercase bg-indigo-500 rounded-full shadow item-center hover:bg-indigo-800 focus:shadow-outline focus:outline-none"
+              className="flex justify-center w-full px-10 py-3 mt-6 font-medium text-white uppercase bg-indigo-500 rounded-full shadow item-center hover:bg-indigo-800 focus:shadow-outline focus:outline-none"
             >
               <span class="ml-2 mt-5px">Proceed to checkout</span>
             </button>
