@@ -1,10 +1,12 @@
 import React from "react";
+import {Route} from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import "../App.css";
 import { logout } from "../actions/userActions";
 import { Menu } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/solid";
+import { ChevronDownIcon, ShoppingCartIcon } from "@heroicons/react/solid";
+import SearchBox from './SearchBox'
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -46,15 +48,17 @@ const Header = () => {
               >
                 About
               </Link>
+             
             </nav>
           </div>
+          <div> <Route render={({ history }) => <SearchBox history={history} />} /></div>
 
-          <div className="inline-flex items-center ml-5 space-x-6 lg:justify-end ">
+          <div className="flex  ml-2 space-x-4 ">
             <Link
               to="/cart"
-              className="mr-5 font-medium leading-6 text-gray-600 hover:text-gray-900"
+              className="mr-2 font-xs leading-6 text-gray-600 hover:text-gray-900"
             >
-              Cart
+              <ShoppingCartIcon className="h-7 w-7 text-blue-500 "/>
             </Link>
 
             {userInfo ? (
